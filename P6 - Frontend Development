@@ -1,0 +1,45 @@
+cd ..
+npx create-react-app frontend
+cd frontend
+npm start
+
+
+// frontend/src/components/Chat.js
+import React, { useState } from 'react';
+import axios from 'axios';
+
+function Chat() {
+  const [message, setMessage] = useState('');
+  const [responses, setResponses] = useState([]);
+
+  const sendMessage = async () => {
+    const response = await axios.post('http://localhost:5000/api/conversation/chat', { message });
+    setResponses([...responses, { user: message, ai: response.data.content }]);
+    setMessage('');
+  };
+
+  return (
+    <div className="chat">
+      <h1>AI Life Partner Chat</h1>
+      <div className="chat-box">
+        {responses.map((res, index) => (
+          <div key={index}>
+            <p><strong>You:</strong> {res.user}</p>
+            <p><strong>AI:</strong> {res.ai}</p>
+          </div>
+        ))}
+      </div>
+      <input 
+        type="text" 
+        value={message} 
+        onChange={(e) => setMessage(e.target.value)} 
+        placeholder="Type your message here..." 
+      />
+      <button onClick={sendMessage}>Send</button>
+    </div>
+  );
+}
+
+export default Chat;
+
+
