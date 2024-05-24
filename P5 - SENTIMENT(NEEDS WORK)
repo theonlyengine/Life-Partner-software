@@ -1,0 +1,28 @@
+npm install sentiment
+
+
+// backend/routes/conversation.js (continued)
+const Sentiment = require('sentiment');
+const sentiment = new Sentiment();
+
+router.post('/chat', async (req, res) => {
+  const { message } = req.body;
+  const sentimentResult = sentiment.analyze(message);
+
+  try {
+    const response = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages: [{ role: "user", content: message }]
+    });
+    const aiResponse = response.data.choices[0].message;
+
+    // Adjust response based on sentiment
+    if (sentimentResult.score < 0) {
+      aiResponse.content = `I sense you're feeling down. ${aiResponse.content}`;
+    }
+
+    res.json(aiResponse);
+  } catch (error) {
+    res.status(500).send('Error with AI service');
+  }
+});
