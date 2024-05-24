@@ -1,0 +1,6 @@
+mkdir ai-life-partner
+cd ai-life-partner
+mkdir backend
+cd backend
+npm init -y
+npm install express mongoose body-parser
